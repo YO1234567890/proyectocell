@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+ <head>
+   <meta charset="utf-8">
+   <title>Ejemplo de PWA</title>
+
+   <!-- Ícono para la página web. -->
+   <link rel="icon" sizes="32x32" href="favicon2.ico">
+
+   <!-- Color de la barra de navegación de Chrome. -->
+   <meta name="theme-color" content="#ffcb2d">
+
+   <!-- Configuración de la Web App Chrome y Microsoft Store. -->
+   <link rel="manifest" href="manifest.json">
+
+   <!-- Configuración para del acceso directo en Windows Edge/IE -->
+   <!-- Icono -->
+   <meta name="msapplication-TileImage" content="img/firebase.png">
+   <!-- Color de tile. -->
+   <meta name="msapplication-TileColor" content="#4fc3f7">
+
+   <!-- Configuración para Web Clip en Safari. -->
+   <meta name="mobile-web-app-capable" content="yes">
+   <link rel="apple-touch-icon" href="img/firebase.png">
+   <link rel="apple-touch-startup-image"
+     href="img/firebase.png">
+   <meta name="apple-mobile-web-app-capable" content="yes">
+   <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="stylesheet" href="css/estilos.css">
+
+   <!-- update the version number as needed -->
+   <script defer src="/__/firebase/6.0.2/firebase-app.js"></script>
+   <!-- include only the Firebase features as you need -->
+   <script defer src="/__/firebase/6.0.2/firebase-auth.js"></script>
+   <script defer src="/__/firebase/6.0.2/firebase-firestore.js"></script>
+   <script defer src="/__/firebase/6.0.2/firebase-messaging.js"></script>
+   <script defer src="/__/firebase/6.0.2/firebase-storage.js"></script>
+   <!-- initialize the SDK after all desired features are loaded -->
+   <script defer src="/__/firebase/init.js"></script>
+
+ </head>
+ <body>
+   <h1>Multiplicaión</h1>
+    <form id="vista">
+      <p><output id="respuesta"></output></p>
+      <p><input type="numeric" id="numero1" required placeholder="Primer número"></p>
+      <p><input type="numeric" id="numero2" required placeholder="Segundo número"></p>
+      <p>
+        <button type="submit">Multiplicar</button>
+      </p>
+	 <footer>Copyright &copy; 2019 Juan Carlos Sosa Corona IC51</footer>
+   </form>
+   <script type="module">
+     const hilo = new Worker("wwSaludo.js");
+	  vista.addEventListener("submit", multiplicar);
+	  hilo.addEventListener("message", evt => muestraRespuesta(evt.data));
+	  function muestraRespuesta(texto) {
+        respuesta.value = texto;
+      }
+ 
+      /** Envía datos al hilo para que genere un saludo.
+       * @param {Event} evt objeto que describe el evento. */
+      function multiplicar(evt) {
+        evt.preventDefault();
+        /* Toma los datos capturados en la interfaz gráfica y arma un objeto
+         * con las property nombre1 y nombre2. */
+        const modelo = leeModelo();
+        // Envía los datos al hilo.
+        hilo.postMessage(modelo);
+      }
+	  function leeModelo() {
+        // Lo que está entre llaves es el objeto.
+        return {
+          /* nombre1: indica el nombre de la property
+           * nombre1.value.trim() toma la captura de id="nombre1" y le quita los
+           *        espacios y saltos de línea al inicio y al final. */
+          numero1: numero1.value,
+          numero2: numero2.value
+        };
+      }
+	  
+	  
+	  async function registraServiceWorker() {
+       if ("serviceWorker" in navigator) {
+         try {
+           const registro = await navigator.serviceWorker.register("sw.js");
+           console.log("Service Worker registrado.");
+           console.log(registro);
+         } catch (e) {
+           muestraError(e);
+         }
+       }
+     }
+
+     registraServiceWorker();
+     document.addEventListener('DOMContentLoaded', function () {
+       try {
+         let app = firebase.app();
+         let features = ['auth', 'database', 'messaging', 'storage']
+           .filter(feature => typeof app[feature] === 'function');
+       } catch (e) {
+         console.log(e);
+       }
+     });
+   </script>
+ </body>
+</html>

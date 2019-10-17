@@ -1,0 +1,32 @@
+body {
+ margin: 0
+}
+
+body, input, a {
+ font-family: sans-serif
+}
+
+header {
+ text-align: center
+}
+
+main {
+ max-width: 600px;
+ margin: 0 auto;
+ background-color: #f0f0f0
+}
+
+p {
+ margin: 1em
+}
+
+label {
+ display: block;
+ font-size: small;
+ font-weight: bold
+}
+
+label>* {
+ display: block;
+ width: 100%
+}
